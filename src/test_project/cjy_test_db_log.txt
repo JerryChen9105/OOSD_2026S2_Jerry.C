@@ -1,0 +1,206 @@
+2026/07/06 北京时间 14:42
+
+create table course (
+courseID int,
+courseName varchar(60) not null,
+requiredTotalCredit float not null,
+
+constraint pk_courseID primary key (courseID)
+);
+
+create table study_field (
+fieldPrefix char(4),
+fieldName varchar(60),
+
+constraint pk_fieldPrefix primary key (fieldPrefix)
+);
+
+create table subject (
+fieldPrefix char(4),
+subjectCode int,
+subjectName varchar(60),
+creditPoint float not null,
+
+constraint pk_subjectID primary key (fieldPrefix, subjectCode),
+constraint fk_subjectPrefix foreign key (fieldPrefix)
+	references study_field(fieldPrefix)
+);
+
+create table major (
+majorID int,
+fieldPrefix char(4) not null,
+majorName varchar(60),
+requiredCredit float not null,
+
+constraint pk_majorID primary key (majorID),
+constraint fk_majorField foreign key (fieldPrefix)
+	references study_field(fieldPrefix)
+);
+
+create table student (
+sid int,
+fname varchar(40),
+lname varchar(40),
+courseID int,
+birthday datetime not null,
+majorID int,
+
+constraint pk_sid primary key (sid),
+constraint fk_courseID foreign key (courseID)
+	references course(courseID)
+    on delete set null,
+constraint fk_majorID foreign key (majorID)
+	references major(majorID)
+    on delete set null
+);
+
+insert into study_field (fieldPrefix, fieldName)
+values ("MAST", "mathematic and statistic");
+
+insert into study_field (fieldPrefix, fieldName)
+values ("COMP", "computer science");
+
+insert into study_field (fieldPrefix, fieldName)
+values ("ECON", "economics");
+
+insert into study_field (fieldPrefix, fieldName)
+values ("FNCE", "finance");
+
+insert into study_field (fieldPrefix, fieldName)
+values ("PHYC", "physics");
+
+insert into study_field (fieldPrefix, fieldName)
+values ("INFO", "informatics");
+
+insert into subject (fieldPrefix, subjectCode, subjectName, creditPoint)
+values ("INFO", 20003, "database systems", 12.5);
+
+insert into subject (fieldPrefix, subjectCode, subjectName, creditPoint)
+values ("MAST", 20029, "engineering mathematics", 12.5);
+
+insert into subject (fieldPrefix, subjectCode, subjectName, creditPoint)
+values ("MAST", 20026, "real analysis", 12.5);
+
+insert into subject (fieldPrefix, subjectCode, subjectName, creditPoint)
+values ("MAST", 10007, "linear algebra", 12.5);
+
+insert into subject (fieldPrefix, subjectCode, subjectName, creditPoint)
+values ("MAST", 10006, "calculus 2", 12.5);
+
+insert into subject (fieldPrefix, subjectCode, subjectName, creditPoint)
+values
+	("MAST", 20004, "probability", 12.5),
+    ("MAST", 20005, "statistic", 12.5),
+    ("MAST", 20009, "vector calculus", 12.5);
+
+insert into study_field (fieldPrefix, fieldName)
+values ("SWEN", "software engineering");
+
+insert into subject (fieldPrefix, subjectCode, subjectName, creditPoint)
+values
+	("COMP", 10001, "foundations of computing", 12.5),
+    ("COMP", 10002, "foundations of algorithms", 12.5),
+    ("COMP", 20008, "elements of data processing", 12.5),
+    ("COMP", 20003, "algorithms and data structures", 12.5),
+    ("SWEN", 20003, "object oriented software development", 12.5);
+
+insert into student (sid, fname, lname, courseID, birthday, majorID)
+value (1767172, "Jerry", "Chen", NULL, "2008-05-15", NULL);
+
+-- 允许 root 用户从任何 IP 地址（%）连接
+CREATE USER IF NOT EXISTS 'root'@'%' IDENTIFIED BY 'Jerry20080515';
+-- 授予 root 从任何 IP 连接的所有数据库权限
+GRANT ALL PRIVILEGES ON *.* TO 'root'@'%' WITH GRANT OPTION;
+-- 刷新权限，让设置立即生效
+FLUSH PRIVILEGES;
+
+ALTER USER 'root'@'%' IDENTIFIED WITH mysql_native_password BY 'Jerry20080515';
+FLUSH PRIVILEGES;
+
+insert into course (courseID, courseName, requiredTotalCredit)
+value (1, "bachelor of design", 300);
+
+insert into course (courseID, courseName, requiredTotalCredit)
+value
+	(2, "bachelor of science", 300),
+    (3, "bachelor of commerce", 300),
+    (4, "bachelor of music", 300),
+    (5, "bachelor of biomedicine", 300),
+    (6, "bachelor of agriculture", 300),
+    (7, "bachelor of arts", 300);
+
+insert into student (sid, fname, lname, courseID, birthday, majorID)
+value (1767173, "Demo", "Zheng", NULL, "2007-10-15", NULL);
+
+ALTER TABLE `cjy_test_db`.`major` 
+DROP FOREIGN KEY `fk_majorField`;
+ALTER TABLE `cjy_test_db`.`major` 
+DROP COLUMN `fieldPrefix`,
+DROP INDEX `fk_majorField` ;
+;
+
+insert into subject (fieldPrefix, subjectCode, subjectName, creditPoint)
+value
+    ("ECON", 10004, "introductory microeconomics", 12.5)
+    ("ECON", 10003, "introductory macroeconomics", 12.5);
+
+create table student_enrolment (
+sid int,
+fieldPrefix char(4),
+subjectCode int,
+constraint pk_enrolmentID primary key (sid, fieldPrefix, subjectCode),
+constraint fk_sid foreign key (sid)
+	references student(sid)
+    on update cascade,
+constraint fk_subjectID foreign key (fieldPrefix, subjectCode)
+	references subject(fieldPrefix, subjectCode)
+    on update cascade
+);
+
+insert into student_enrolment (sid, fieldPrefix, subjectCode)
+value
+	(1767172, "MAST", 10006),
+    (1767172, "MAST", 10007),
+    (1767172, "COMP", 10001),
+    (1767172, "COMP", 10002),
+    (1767172, "ECON", 10004),
+    (1767172, "MAST", 20029),
+    (1767172, "MAST", 20004),
+    (1767172, "COMP", 20008),
+    (1767172, "INFO", 20003);
+
+
+Datetime d1 = new Datetime(2008, 5, 15);
+        Datetime d2 = new Datetime(2026, 6, 29);
+
+        Subject sub1 = new Subject("COMP20003", "Algorithm and Data Structures",
+                                   SubjectType.decipline, 12.5f, d2, -1);
+        Subject sub2 = new Subject("SWEN20003", "Object-Oriented Software Development",
+                                   SubjectType.decipline, 12.5f, d2, 39);
+        Subject sub3 = new Subject("MAST20026", "Real Analysis",
+                                   SubjectType.breath, 12.5f, d2, 51);
+        Subject sub4 = new Subject("FNCE10002", "Principles of Finance",
+                                   SubjectType.breath, 12.5f, d2, 80);
+
+        Student s1 = new Student("1767172", "Jerry", "Chen", d1, "Bachelor of Design");
+
+        s1.addEnrolment(sub1);
+        s1.addEnrolment(sub2);
+        s1.addEnrolment(sub4);
+        s1.addEnrolment(sub3);
+        s1.addEnrolment(sub4);
+        s1.query();
+
+        Datetime d3 = new Datetime(2026, 7, 4);
+        Subject sub5 = new Subject("MAST20005", "Statistic",
+                                   SubjectType.breath, 12.5f, d3, -1);
+        
+        s1.addEnrolment(sub5);
+        s1.query();
+
+        s1.withdrawEnrolment("SWEN20003");
+        s1.changeGrade("SWEN20003", 65);
+        s1.changeGrade("MAST20026", 85);
+        s1.withdrawEnrolment("SWEN20003");
+        s1.query();
+        System.out.println("\n==> Weighted Average Grade: " + s1.weightedAvgGrade() + "\n");
