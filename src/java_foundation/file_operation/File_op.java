@@ -9,7 +9,7 @@ public class File_op {
 
     public static void main(String[] args) {
 
-        String url = "/home/cjy/OOSD_2026S2_Jerry.C/src/Java_foundation/student.txt";
+        String url = "/home/cjy/OOSD_2026S2_Jerry.C/src/java_foundation/file_operation/student.txt";
         //String pattern = "\w:(pattern)";
 
         try (Scanner sc = new Scanner(new File(url))) {
